@@ -1,6 +1,0 @@
-import matplotlib as np
-
-
-
-
-
