@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 R = 3
 import numpy as np
 from scipy.sparse import csr_matrix
+from scipy.sparse.csgraph import shortest_path
 import re
 #with open('SampleCoordinates.txt', mode='r') as file:
 #    text = file.read()
@@ -94,6 +95,11 @@ L = [[(x[0], y[0]),(x[1], y[1])] + [(x[0], y[0]),(x[1], y[1])] ]
 L = []
 for i in range(0,len(linjer[0])):
     L = L +[[(x[linjer[0][i]], y[linjer[0][i]]),(x[linjer[1][i]], y[linjer[1][i]])]]
+
+
+csr1 = np.maximum(csr, csr.transpose())
+D, Pr = shortest_path(csr1, directed=False, method='FW', return_predecessors=True)
+
 
 
 
