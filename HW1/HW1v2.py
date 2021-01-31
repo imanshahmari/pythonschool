@@ -18,47 +18,44 @@ def read_coordinate_file(filename):
     coordinates = []
     for i in range(0,len(x1)):
         coordinates = coordinates + [[x1[i],y1[i]]]
+    coordinates = np.array(coordinates)
     return x1, y1, coordinates
-
-x, y, coordinates = read_coordinate_file('SampleCoordinates.txt')
 
 
 "Del 2"
-def plot_points(x2,y2,csr):
-    linjer = np.nonzero(csr)
+def plot_points(coordinates,indices):
     L = []
-    for i in range(0, len(linjer[0])):
-        L = L + [[(x[linjer[0][i]], y[linjer[0][i]]), (x[linjer[1][i]], y[linjer[1][i]])]]
+    for i in range(0, len(coordinates[:,0])):
+        L = L + [[(coordinates[indices[i,i]]), (coordinates[indices[i,i+1]])]]
     lines = L
     lc = LineCollection(lines, color=['k'],linewidth=0.5)
     fig = plt.figure()
     ax = fig.gca()
     ax.add_collection(lc)
     ax.autoscale()
-    plt.scatter(x2, y2, label='y-values')
+    plt.scatter(coordinates[:,0], coordinates[:,1], label='y-values')
     plt.xlabel('$x$')
     plt.legend()
     return plt.show()
 
 "Del 3"
-def construct_graph_connections(x3,y3, radius):
-    xdistance = np.array([])
-    ydistance = np.array([])
-    index = []
-    for i in range(0, len(x3)):
-        for j in range(i + 1, len(x3)):
-            xdistance = np.append([xdistance], [x3[i] - x3[j]])
-            ydistance = np.append([ydistance], [y3[i] - y3[j]])
-            index = index + [[i, j]]
+def construct_graph_connections(coordinates, radius):
+    coordinates = np.array(coordinates)
+    realdistance = []
+    indices=[]
+    for i in range(0, len(coordinates)-1):
+        for j in range(i + 1, len(coordinates)):
+            distance = np.linalg.norm(coordinates[i] - coordinates[j])
 
-    xdistance1 = xdistance ** 2
-    ydistance1 = ydistance ** 2
-    realdistance = np.sqrt(xdistance1 + ydistance1)
-    for r in range(0, len(realdistance)):
-        if realdistance[r] > radius:
-            realdistance[r] = 0
-    indices = np.array(index)
+            if distance < radius:
+                indices.append([i,j])
+                realdistance.append(distance)
+    realdistance = np.array(realdistance)
+    indices = np.array(indices)
     return indices, realdistance
+
+
+
 
 "Del 4"
 def construct_graph(indices, realdistance, N):
@@ -71,3 +68,20 @@ def construct_graph(indices, realdistance, N):
 
 
 
+
+word = 2
+if word == 1:
+    mode = 'SampleCoordinates.txt'
+    radius = 0.08
+elif word == 2:
+    mode = 'HungaryCities.txt'
+    radius = 0.005
+elif word == 3:
+    mode = 'GermanyCities.txt'
+    radius = 0.0025
+
+x, y, coordinates = read_coordinate_file(mode)
+N=len(x)
+indices, realdistance = construct_graph_connections(coordinates, radius)
+csr = construct_graph(indices, realdistance, N)
+plot_points(coordinates,csr)
