@@ -6,7 +6,7 @@ from scipy.sparse import csr_matrix
 from numpy import linalg as LA
 from random import random
 from scipy.sparse.csgraph import shortest_path
-
+"""
 Ny = 10
 x = np.arange(8)
 
@@ -36,3 +36,27 @@ ax.add_collection(line_segments1)
 ax.set_ylim((0, 2 * Ny + 3))
 ax.set_xlim((0, np.amax(x)))
 plt.show()
+"""
+with open('SampleCoordinates.txt', mode='r') as file:
+    A=[]
+    r = 1
+    for line in file:
+       text = line.strip('{}\n')
+       a,b = text.split(', ')
+       a,b = float(a),float(b)
+       x = b * (r * np.pi / 180)
+       y = r * np.log(np.tan((np.pi / 4) + (np.pi * a / 360)))
+       A.append([x,y])
+coordinates = np.array(A)
+
+
+realdistance = []
+indices=[]
+for i in range(0, len(coordinates)-1):
+    for j in range(i + 1, len(coordinates)):
+        distance = np.linalg.norm(coordinates[i] - coordinates[j])
+        if distance < 0.08:
+            indices.append([i,j])
+            realdistance.append(distance)
+realdistance = np.array(realdistance)
+indices = np.array(indices)

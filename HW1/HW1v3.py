@@ -8,6 +8,7 @@ import itertools
 
 "Del 1"
 def read_coordinate_file(filename):
+    """
     with open('HungaryCities.txt', mode='r') as file:
         A=[]
         r = 1
@@ -20,6 +21,23 @@ def read_coordinate_file(filename):
             A.append([x,y])
     A = np.array(A)
     return A[:,0], A[:,1], A
+    """
+
+    r = 1
+    with open(filename, mode='r') as file:
+        text = file.read()
+    resultt = [float(d) for d in re.findall('-?\d+\.?\d*', text)]
+    result = np.array(resultt)
+    result1 = result.reshape(len(result) // 2, 2)
+    b = result1[:, 1]
+    a = result1[:, 0]
+    x1 = b * (r * np.pi / 180)
+    y1 = r * np.log(np.tan((np.pi / 4) + (np.pi * a / 360)))
+    coordinates = []
+    for i in range(0,len(x1)):
+        coordinates = coordinates + [[x1[i],y1[i]]]
+    coordinates = np.array(coordinates)
+    return x1, y1, coordinates
 
 
 
@@ -59,6 +77,7 @@ def plot_points(coordinates,indices,path):
 
 "Del 3"
 def construct_graph_connections(coordinates, radius):
+    coordinates = np.array(coordinates)
     realdistance = []
     indices=[]
     for i in range(0, len(coordinates)-1):
@@ -96,7 +115,7 @@ def find_shortest_paths(csr, start,end):
     return D,Pr,path[::-1]
 
 
-word = 2
+word = 1
 if word == 1:
     mode = 'SampleCoordinates.txt'
     radius = 0.08

@@ -47,6 +47,8 @@ def construct_graph_connections(x3,y3, radius):
     index = []
     for i in range(0, len(x3)):
         for j in range(i + 1, len(x3)):
+            dx = x3[i] - x3[j]
+            dy = y3[i] - x3[j]
             xdistance = np.append([xdistance], [x3[i] - x3[j]])
             ydistance = np.append([ydistance], [y3[i] - y3[j]])
             index = index + [[i, j]]
