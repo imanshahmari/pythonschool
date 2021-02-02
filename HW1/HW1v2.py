@@ -1,4 +1,5 @@
 import numpy as np
+import time
 import re
 import matplotlib.pyplot as plt
 from matplotlib.collections import LineCollection
@@ -7,24 +8,29 @@ from scipy.sparse.csgraph import shortest_path
 import itertools
 
 "Del 1"
-def read_coordinate_file(filename):
-    with open('HungaryCities.txt', mode='r') as file:
+def read_coordinate_file(mode):
+    start_time_read = time.time()
+
+    with open(mode, mode='r') as file:
         A=[]
         r = 1
         for line in file:
             text = line.strip('{}\n')
-            a,b = text.split(', ')
+            a,b = text.split(',')
             a,b = float(a),float(b)
             x = b * (r * np.pi / 180)
             y = r * np.log(np.tan((np.pi / 4) + (np.pi * a / 360)))
             A.append([x,y])
     A = np.array(A)
-    return A[:,0], A[:,1], A
 
+    print("--- %s seconds read_coordinate_file---" % (time.time() - start_time_read))
+    return A[:,0], A[:,1], A
 
 
 "Del 2"
 def plot_points(coordinates,indices,path):
+    start_time_plot = time.time()
+
     path = list(itertools.chain(*zip(path, path)))
     del path[1]
     del path[len(path) - 1]
@@ -38,13 +44,15 @@ def plot_points(coordinates,indices,path):
             cc_path.append(tuple(coordinates[path[i, j]]))
         L_path.append(cc_path)
 
+    L = [coordinates[i] for i in indices]
+    """
     L = []
     for i in range(0, len(indices)):
         cc = []
         for j in range(0, len(indices[1, :])):
             cc.append(tuple(coordinates[indices[i, j]]))
         L.append(cc)
-
+    """
     lc = LineCollection(L, color=['k'], linewidth=0.5)
     lc1 = LineCollection(L_path, color=['r'])
 
@@ -57,8 +65,12 @@ def plot_points(coordinates,indices,path):
     plt.xlabel('$x$')
     plt.legend()
 
+    print("--- %s seconds plot_points---" % (time.time() - start_time_plot))
+
 "Del 3"
 def construct_graph_connections(coordinates, radius):
+    start_time_construct_graph_connections = time.time()
+
     realdistance = []
     indices=[]
     for i in range(0, len(coordinates)-1):
@@ -69,34 +81,45 @@ def construct_graph_connections(coordinates, radius):
                 realdistance.append(distance)
     realdistance = np.array(realdistance)
     indices = np.array(indices)
+
+    print("--- %s seconds construct_graph_connections---" % (time.time() - start_time_construct_graph_connections))
     return indices, realdistance
-
-
 
 
 "Del 4"
 def construct_graph(indices, realdistance, N):
+    start_time_construct_graph = time.time()
+
     row = indices[:, 0]
     col = indices[:, 1]
     data = realdistance
     N = len(x)
     csr = csr_matrix((data, (row, col)), shape=(N, N)).toarray()
+
+    print("--- %s seconds construct_graph---" % (time.time() - start_time_construct_graph))
     return csr
 
 
 "Del 6"
 def find_shortest_paths(csr, start,end):
+    start_time_shoretest_path = time.time()
+
     csr1 = np.maximum(csr, csr.transpose())
     D, Pr = shortest_path(csr1, directed=False, method='FW', return_predecessors=True)
+
+
     path = [end] #list(range(0,len(csr))).remove(start)
     k = end #tuple(path)
     while Pr[start, k] != -9999:
         path.append(Pr[start, k])
         k = Pr[start, k]
+
+    print("--- %s seconds find_shortest_paths---" % (time.time() - start_time_shoretest_path))
     return D,Pr,path[::-1]
 
 
-word = 2
+
+word = 3
 if word == 1:
     mode = 'SampleCoordinates.txt'
     radius = 0.08
