@@ -8,38 +8,19 @@ from numpy import linalg as LA
 from random import random
 from scipy.sparse.csgraph import shortest_path
 from scipy.spatial import cKDTree
+path = list(itertools.chain(*zip(path, path)))
 
-plt.figure()
-plt.scatter(coordinates[:,0], coordinates[:,1])
-tree = cKDTree(coordinates)
-indicesnew=[]
+del path[1]
+del path[len(path) - 1]
+path = np.array(path)
+path = np.reshape(path, (int(len(path) / 2), 2))
 
-indicesnew = tree.query_pairs(0.08)
-indicesnew = list(indicesnew)
-indicesnew = np.array(indicesnew)
-"""
-for i in range(0,len(coordinates)):
-    idx = tree.query_pairs(0.08)
-    #idx= sorted(tree.query_ball_point(coordinates[i], 0.08))
-    #print(pts[idx])
-    indicesnew.append(idx)
-    
-"""
-"""
-L3 = [coordinates[i] for i in indices]
-
-L3 = []
-for i in range(0, len(indices)):
-    cc = []
-    for j in range(0, len(indices[1, :])):
-        cc.append(tuple(coordinates[indices[i, j]]))
-    L3.append(cc)
-indicesnew2 = indicesnew.
-for i1 in range(0,len(indicesnew))
-"""
-
-
-
-
-
+distancenew=[]
+for i in path:
+    coordinatesnew1 = coordinates[i][0]
+    coordinatesnew2 = coordinates[i][1]
+    distance = np.linalg.norm(coordinatesnew1-coordinatesnew2)
+    distancenew.append(distance)
+distancenew = np.array(distancenew)
+Total_distance= sum(distancenew)
 

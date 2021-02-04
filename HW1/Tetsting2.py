@@ -126,10 +126,23 @@ def construct_fast_graph_connections(coordinates, radius):
     indicesnew = list(indicesnew)
     indicesnew = np.array(indicesnew)
 
+    distancenew=[]
+    for i in indicesnew:
+        coordinatesnew1 = coordinates[i][0]
+        coordinatesnew2 = coordinates[i][1]
+        distance = np.linalg.norm(coordinatesnew1-coordinatesnew2)
+        distancenew.append(distance)
+    distancenew = np.array(distancenew)
     print("--- %s seconds construct_fast_graph_connections---" % (time.time() - start_time_fast_graph_connections))
-    return indicesnew
+    return indicesnew,distancenew
 
-word = 2
+
+
+
+
+
+
+word = 1
 if word == 1:
     mode = 'SampleCoordinates.txt'
     radius = 0.08
@@ -151,7 +164,7 @@ N=len(x)
 #indices, realdistance = construct_graph_connections(coordinates, radius)
 #csr = construct_graph(indices, realdistance, N)
 #D,Pr,path = find_shortest_paths(csr, start,end)
-indicesnew = construct_fast_graph_connections(coordinates, radius)
-plot_points(coordinates,indicesnew)
+indicesnew,distancenew = construct_fast_graph_connections(coordinates, radius)
+#plot_points(coordinates,indicesnew)
 
 #plot_points(coordinates,indices)
