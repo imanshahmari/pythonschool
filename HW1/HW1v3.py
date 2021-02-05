@@ -115,7 +115,7 @@ def find_shortest_paths(csr, start,end):
     return D,Pr,path[::-1]
 
 
-word = 1
+word = 3
 if word == 1:
     mode = 'SampleCoordinates.txt'
     radius = 0.08
