@@ -192,7 +192,7 @@ def construct_fast_graph_connections(coordinates, radius):
 
 
 "Set word to 1 to run with Sample coordinates, 2 for run Hungary and 3 for run Germany "
-word = 2
+word = 3
 if word == 1:
     mode = 'SampleCoordinates.txt'
     radius = 0.08
