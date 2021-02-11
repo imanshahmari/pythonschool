@@ -2,6 +2,7 @@ from cardlib import *
 import numpy as np
 
 card1 = Jackcard(Suit.Diamonds)
+card2 = QueenCard(Suit.Hearts)
 print(card1.suit)
 x = card1.get_value()
 cards=[]
