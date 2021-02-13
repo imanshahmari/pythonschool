@@ -114,46 +114,39 @@ class PokerHand:
         self.highest_value=[]
 
     def straight(self):
-        # If cards_combined has these values it is NOT a straight
-        straight_test = [[2, 7], [3, 8], [4, 9], [5, 10], [6, 11], [7, 12], [8, 13], [9, 14], [14, 6]]
-        # Get rid of repeated values with turning them to sets
+        # Get rid of repeated values by turning them into sets
         values_cards_combined = [item.get_value() for item in self.cards_combined]
         uniqe_values = list(set(values_cards_combined))
         self.cards_combined.sort()
         self.type = "Straight"
+
         if len(uniqe_values) == 7:
             list_7_1 = [item.get_value() for item in self.cards_combined[0:5]]
             list_7_2 = [item.get_value() for item in self.cards_combined[1:6]]
             list_7_3 = [item.get_value() for item in self.cards_combined[2:7]]
-            for test in straight_test:
-                if test[0] in list_7_1 and test[1] in list_7_1:
-                    self.type = "Not straight"
-
-                if test[0] in list_7_2 and test[1] in list_7_2:
-                    self.type = "Not straight"
-
-                if test[0] in list_7_3 and test[1] in list_7_3:
-                    self.type = "Not straight"
-
-
 
         elif len(uniqe_values) == 6:
             list_6_1 = [item.get_value() for item in self.cards_combined[0:5]]
+            list_6_1.sort()
+            self.highest_value = list_6_1[4]
+            for i in range(0,4):
+                if self.highest_value == 14:
+                    if not list_6_1[i] == i+2: self.type = "Not straight"
+                else:
+                    if not list_6_1[i] + 1 == list_6_1[i+1]: self.type = "Not straight"
+            #if self.type == "Straight":
             list_6_2 = [item.get_value() for item in self.cards_combined[1:6]]
-            for test in straight_test:
-                if test[0] in list_6_1 and test[1] in list_6_1:
-                    self.type = "Not straight"
 
-                if test[0] in list_6_2 and test[1] in list_6_2:
-                    self.type = "Not straight"
 
         elif len(uniqe_values) == 5:
             list_5 = [item.get_value() for item in self.cards_combined]
-            for test in straight_test:
-                if test[0] in list_5 and test[1] in list_5:
-                    self.type = "Not straight"
             list_5.sort()
             self.highest_value = list_5[4]
+            for i in range(0,4):
+                if self.highest_value == 14:
+                    if not list_5[i] == i+2: self.type = "Not straight"
+                else:
+                    if not list_5[i] + 1 == list_5[i+1]: self.type = "Not straight"
 
         elif len(uniqe_values) <=4:
             print("4:e elif")
@@ -195,6 +188,6 @@ for element in All:
 """
 
 # Example for a straight card list
-List = [StandardDeck.cards[0],StandardDeck.cards[24],StandardDeck.cards[8],StandardDeck.cards[12],StandardDeck.cards[16]]
+List = [StandardDeck.cards[0],StandardDeck.cards[4],StandardDeck.cards[8],StandardDeck.cards[12],StandardDeck.cards[16]]
 Pokerhand = PokerHand(List)
 Pokerhand.straight()
