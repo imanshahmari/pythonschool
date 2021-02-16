@@ -7,7 +7,6 @@ import numpy as np
 
 #Creating super class PlayingCard
 
-
 class PlayingCard:
     def __init__(self, suit):
         self.suit = suit
@@ -94,63 +93,254 @@ class StandardDeck:
 
 class Hand:
     def __init__(self):
-        hand = []
-        self.hand = hand
+        self.cards = []
+
     def add_new_card(self,newcard):
-        return self.hand.append(newcard)
+        return self.cards.append(newcard)
 
     def drop_cards(self,indexes):
         for index in sorted(indexes, reverse = True):
-            del self.hand[index]
+            del self.cards[index]
         return
     def sort_cards(self):
-        return self.hand.sort()
+        return self.cards.sort()
+
+    def best_poker_hand(self,other):
+        pass
+
+
+
+class Handtype(IntEnum):
+    high_card = 0
+    one_pair = 1
+    two_pair = 2
+    three_of_a_kind = 3
+    straight = 4
+    flush = 5
+    full_house = 6
+    four_of_a_kind = 7
+    straight_flush = 8
+
 
 
 class PokerHand:
     def __init__(self,cards_combined):
         self.cards_combined = cards_combined
-        self.type =[]
+        self.type = []
         self.highest_value=[]
+        self.high_card()
+        self.one_pair()
+        self.two_pair()
+        self.three_of_a_kind()
+        self.straight()
+        self.check_flush()
+        self.check_full_house()
+        self.four_of_a_kind()
+        self.check_straight_flush()
+
+    def __lt__(self, other):
+        if self.type == other.type:
+            return tuple(self.highest_value.sort(reverse=True)) < tuple(other.highest_value.sort(reverse=True))
+        else:
+            return self.type < other.type
+
+
 
     def straight(self):
         # Get rid of repeated values by turning them into sets
         values_cards_combined = [item.get_value() for item in self.cards_combined]
         uniqe_values = list(set(values_cards_combined))
         self.cards_combined.sort()
-        self.type = "Straight"
 
         if len(uniqe_values) == 7:
             list_7_1 = [item.get_value() for item in self.cards_combined[0:5]]
+            list_7_1.sort()
             list_7_2 = [item.get_value() for item in self.cards_combined[1:6]]
+            list_7_2.sort()
             list_7_3 = [item.get_value() for item in self.cards_combined[2:7]]
+            list_7_3.sort()
+            list_7 = [list_7_1,list_7_2,list_7_3]
+            for i in range(0,3):
+               for j in range(0,4):
+                   if list_7[i][4] == 14 and list_7[i][4] == 2:
+                       if not list_7[i][j] == j + 2: break
+                   else:
+                       if not list_7[i][j] + 1 == list_7[i][j + 1]: break
+               self.type = Handtype.straight
+               if self.type == Handtype.straight:
+                   self.highest_value.append(list_7[i][4])
+            if len(self.highest_value) > 1:
+                self.type = Handtype.straight
+
+
 
         elif len(uniqe_values) == 6:
             list_6_1 = [item.get_value() for item in self.cards_combined[0:5]]
             list_6_1.sort()
-            self.highest_value = list_6_1[4]
-            for i in range(0,4):
-                if self.highest_value == 14:
-                    if not list_6_1[i] == i+2: self.type = "Not straight"
+            for j in range(0,4):
+                if list_6_1[4] == 14 and list_6_1[0] == 2:
+                    if not list_6_1[j] == j+2: break
                 else:
-                    if not list_6_1[i] + 1 == list_6_1[i+1]: self.type = "Not straight"
-            #if self.type == "Straight":
+                    if not list_6_1[j] + 1 == list_6_1[j+1]: break
+            self.type = Handtype.straight
+            if self.type == Handtype.straight:
+                self.highest_value.append(list_6_1[4])
+
             list_6_2 = [item.get_value() for item in self.cards_combined[1:6]]
+            list_6_2.sort()
+            for j in range(0, 4):
+                if list_6_2[4] == 14 and list_6_2[0] == 2:
+                    if not list_6_2[j] == j + 2: break
+                else:
+                    if not list_6_2[j] + 1 == list_6_2[j + 1]: break
+            self.type = Handtype.straight
+            if self.type == Handtype.straight:
+                self.highest_value.append(list_6_2[4])
+
 
 
         elif len(uniqe_values) == 5:
             list_5 = [item.get_value() for item in self.cards_combined]
             list_5.sort()
-            self.highest_value = list_5[4]
-            for i in range(0,4):
-                if self.highest_value == 14:
-                    if not list_5[i] == i+2: self.type = "Not straight"
+            for j in range(0,4):
+                if self.highest_value == 14 and list_5[0] == 2:
+                    if not list_5[j] == j+2: break
                 else:
-                    if not list_5[i] + 1 == list_5[i+1]: self.type = "Not straight"
+                    if not list_5[j] + 1 == list_5[j+1]: break
+            self.type = Handtype.straight
+            if self.type == Handtype.straight:
+                self.highest_value.append(list_5[4])
 
         elif len(uniqe_values) <=4:
-            print("4:e elif")
-            self.type = "Not straight"
+            self.type = []
+
+
+    def check_straight_flush(self):
+        vals = [(c.get_value(), c.suit) for c in self.cards_combined] \
+               + [(1, c.suit) for c in self.cards_combined if c.get_value() == 14]  # Add the aces!
+        for c in reversed(self.cards_combined):  # Starting point (high card)
+            # Check if we have the value - k in the set of cards:
+            found_straight = True
+            for k in range(1, 5):
+                if (c.get_value() - k, c.suit) not in vals:
+                    found_straight = False
+                    break
+            if found_straight:
+                self.highest_value = c.get_value()
+                self.type = Handtype.straight_flush
+                return
+
+
+
+    def check_full_house(self):
+        from collections import Counter
+        """
+        Checks for the best full house in a list of cards (may be more than just 5)
+
+        :param cards: A list of playing cards
+        :return: None if no full house is found, else a tuple of the values of the triple and pair.
+        """
+        value_count = Counter()
+        for c in self.cards_combined:
+            value_count[c.get_value()] += 1
+        # Find the card ranks that have at least three of a kind
+        threes = [v[0] for v in value_count.items() if v[1] >= 3]
+        threes.sort()
+        # Find the card ranks that have at least a pair
+        twos = [v[0] for v in value_count.items() if v[1] >= 2]
+        twos.sort()
+
+        # Threes are dominant in full house, lets check that value first:
+        for three in reversed(threes):
+            for two in reversed(twos):
+                if two != three:
+                    self.type = Handtype.full_house
+                    self.highest_value = [three,two]
+
+
+    def check_flush(self):
+        vals2_suit = [c.suit for c in self.cards_combined]
+        vals2_values =[item.get_value() for item in self.cards_combined]
+        for i in vals2_suit:
+            if not vals2_suit[0] == vals2_suit[i]:
+                break
+            else:
+                self.type = Handtype.flush
+                vals2_values.sort()
+                self.highest_value = vals2_values[-1]
+
+
+
+    def four_of_a_kind(self):
+        from collections import Counter
+        value_count = Counter()
+        for c in self.cards_combined:
+            value_count[c.get_value()] += 1
+        fours = [v[0] for v in value_count.items() if v[1] >= 4]
+        fours.sort()
+        ones = [v[0] for v in value_count.items() if v[1] >= 1]
+        ones.sort()
+        for four in reversed(fours):
+            for one in reversed(ones):
+                if one != four:
+                    self.type = Handtype.four_of_a_kind
+                    self.highest_value = [four]
+
+    def three_of_a_kind(self):
+        from collections import Counter
+        value_count = Counter()
+        for c in self.cards_combined:
+            value_count[c.get_value()] += 1
+        threes = [v[0] for v in value_count.items() if v[1] >= 3]
+        threes.sort()
+        zeros = [v[0] for v in value_count.items() if v[1] >= 0]
+        zeros.sort()
+        for three in reversed(threes):
+            for zero in reversed(zeros):
+                if zero != three:
+                    self.type = Handtype.three_of_a_kind
+                    self.highest_value = [three]
+
+    def two_pair(self):
+        from collections import Counter
+        value_count = Counter()
+        for c in self.cards_combined:
+            value_count[c.get_value()] += 1
+        twos_1 = [v[0] for v in value_count.items() if v[1] >= 2]
+        twos_1.sort()
+        twos_2 = [v[0] for v in value_count.items() if v[1] >= 2]
+        twos_2.sort()
+        for two_1 in reversed(twos_1):
+            for two_2 in reversed(twos_2):
+                if two_2 != two_1:
+                    self.type = Handtype.two_pair
+                    self.highest_value = [two_1,two_2]
+
+    def one_pair(self):
+        from collections import Counter
+        value_count = Counter()
+        for c in self.cards_combined:
+            value_count[c.get_value()] += 1
+        twos = [v[0] for v in value_count.items() if v[1] >= 2]
+        twos.sort()
+        zeros = [v[0] for v in value_count.items() if v[1] >= 0]
+        zeros.sort()
+        for two in reversed(twos):
+            for zero in reversed(zeros):
+                if zero != two:
+                    self.type = Handtype.one_pair
+                    self.highest_value = [two]
+
+    def high_card(self):
+        self.cards_combined.sort()
+        self.type = Handtype.high_card
+        self.highest_value = self.cards_combined[4]
+
+
+
+
+
+
 
 
 StandardDeck = StandardDeck()
@@ -160,34 +350,12 @@ Hand.add_new_card(StandardDeck.cards[0]) # problem when I put :
 Hand.add_new_card(StandardDeck.cards[1]) # problem when I put :
 
 
-"""
-Bordet = []
-for i in range(0,5):
-    StandardDeck.shuffle()
-    Bordet.append(StandardDeck.cards[i])
-
-All = Bordet
-All.sort()
-
-
-Clubs = []
-Hearts = []
-Diamonds = []
-Spades = []
-for element in All:
-    if element.suit == Suit.Clubs:
-        Clubs.append(element)
-    elif element.suit == Suit.Hearts:
-        Hearts.append(element)
-    elif element.suit == Suit.Diamonds:
-        Diamonds.append(element)
-    elif element.suit == Suit.Spades:
-        Spades.append(element)
-
-    print(element.suit)
-"""
 
 # Example for a straight card list
-List = [StandardDeck.cards[0],StandardDeck.cards[4],StandardDeck.cards[8],StandardDeck.cards[12],StandardDeck.cards[16]]
-Pokerhand = PokerHand(List)
-Pokerhand.straight()
+List1 = [StandardDeck.cards[0],StandardDeck.cards[1],StandardDeck.cards[4],StandardDeck.cards[8],StandardDeck.cards[12],StandardDeck.cards[12],StandardDeck.cards[16]]
+Pokerhand1 = PokerHand(List1)
+
+List2 = [StandardDeck.cards[0],StandardDeck.cards[1],StandardDeck.cards[4],StandardDeck.cards[8],StandardDeck.cards[12]]
+Pokerhand2 = PokerHand(List2)
+
+xxx = [Pokerhand1,Pokerhand2]

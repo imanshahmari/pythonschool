@@ -1,12 +1,12 @@
 import pytest
-from enum import Enum
+from enum import IntEnum
 from cardlib import *
 
 
 # This test assumes you call your suit class "Suit" and the colours "Hearts and "Spades"
 def test_cards():
-    h5 = NumberedCard(4, Suit.Hearts)
-    assert isinstance(h5.suit, Enum)
+    h5 = NumberedCard(Suit.Hearts,4)
+    assert isinstance(h5.suit, IntEnum)
 
     sk = KingCard(Suit.Spades)
     assert sk.get_value() == 13
@@ -18,8 +18,8 @@ def test_cards():
 # This test assumes you call your shuffle method "shuffle" and the method to draw a card "draw"
 def test_deck():
     d = StandardDeck()
-    c1 = d.draw()
-    c2 = d.draw()
+    c1 = d.take_card()
+    c2 = d.take_card()
     assert not c1 == c2
 
     d2 = StandardDeck()
