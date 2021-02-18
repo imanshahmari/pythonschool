@@ -105,8 +105,10 @@ class Hand:
     def sort_cards(self):
         return self.cards.sort()
 
-    def best_poker_hand(self,other):
-        pass
+    def best_poker_hand(self,Deck_cards):
+        all_cards = self.cards + Deck_cards
+        best_combo = PokerHand(all_cards)
+        return best_combo
 
 
 
@@ -345,9 +347,13 @@ class PokerHand:
 
 StandardDeck = StandardDeck()
 
-Hand = Hand()
-Hand.add_new_card(StandardDeck.cards[0]) # problem when I put :
-Hand.add_new_card(StandardDeck.cards[1]) # problem when I put :
+Hand1 = Hand()
+Hand1.add_new_card(StandardDeck.cards[0]) # problem when I put :
+Hand1.add_new_card(StandardDeck.cards[1]) # problem when I put :
+
+#Hand2 =
+
+
 
 
 
@@ -355,7 +361,10 @@ Hand.add_new_card(StandardDeck.cards[1]) # problem when I put :
 List1 = [StandardDeck.cards[0],StandardDeck.cards[1],StandardDeck.cards[4],StandardDeck.cards[8],StandardDeck.cards[12],StandardDeck.cards[12],StandardDeck.cards[16]]
 Pokerhand1 = PokerHand(List1)
 
-List2 = [StandardDeck.cards[0],StandardDeck.cards[1],StandardDeck.cards[4],StandardDeck.cards[8],StandardDeck.cards[12]]
-Pokerhand2 = PokerHand(List2)
+Deck_cards = [StandardDeck.cards[0],StandardDeck.cards[1],StandardDeck.cards[4]]
+#Pokerhand2 = PokerHand(List2)
 
-xxx = [Pokerhand1,Pokerhand2]
+
+
+
+#xxx = [Pokerhand1,Pokerhand2]
