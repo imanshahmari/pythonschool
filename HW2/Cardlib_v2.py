@@ -351,14 +351,14 @@ Hand1 = Hand()
 Hand1.add_new_card(StandardDeck.cards[0]) # problem when I put :
 Hand1.add_new_card(StandardDeck.cards[1]) # problem when I put :
 
-#Hand2 =
+
 
 
 
 
 
 # Example for a straight card list
-List1 = [StandardDeck.cards[0],StandardDeck.cards[1],StandardDeck.cards[4],StandardDeck.cards[8],StandardDeck.cards[12],StandardDeck.cards[12],StandardDeck.cards[16]]
+List1 = [StandardDeck.cards[0],StandardDeck.cards[4],StandardDeck.cards[8],StandardDeck.cards[12],StandardDeck.cards[27],StandardDeck.cards[33],StandardDeck.cards[23]]
 Pokerhand1 = PokerHand(List1)
 
 Deck_cards = [StandardDeck.cards[0],StandardDeck.cards[1],StandardDeck.cards[4]]
@@ -368,3 +368,4 @@ Deck_cards = [StandardDeck.cards[0],StandardDeck.cards[1],StandardDeck.cards[4]]
 
 
 #xxx = [Pokerhand1,Pokerhand2]
+
