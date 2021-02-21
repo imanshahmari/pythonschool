@@ -147,7 +147,9 @@ class PokerHand:
                 return self.highest_value < other.highest_value
         else:
             return self.type < other.type
-
+    def __eq__(self,other):
+        if self.highest_value == other.highest_value:
+            return True
 
 
     def straight(self):
@@ -229,10 +231,6 @@ class PokerHand:
 
 
 
-        elif len(uniqe_values) <=4:
-            self.type = []
-
-
     def check_straight_flush(self):
         vals = [(c.get_value(), c.suit) for c in self.cards_combined] \
                + [(1, c.suit) for c in self.cards_combined if c.get_value() == 14]  # Add the aces!
@@ -279,13 +277,14 @@ class PokerHand:
     def check_flush(self):
         vals2_suit = [c.suit for c in self.cards_combined]
         vals2_values =[item.get_value() for item in self.cards_combined]
+        found_flush = True
         for i in vals2_suit:
-            if not vals2_suit[0] == vals2_suit[i]:
-                break
-            else:
-                self.type = Handtype.flush
-                vals2_values.sort()
-                self.highest_value = vals2_values[-1]
+            if vals2_suit[0] == vals2_suit[i]:
+                found_flush = False
+        if found_flush == True:
+            self.type = Handtype.flush
+            vals2_values.sort()
+            self.highest_value = vals2_values[-1]
 
 
 
@@ -357,36 +356,3 @@ class PokerHand:
         all_values.sort(reverse=True)
         self.type = Handtype.high_card
         self.highest_value = all_values
-
-
-
-
-
-
-
-
-"""
-StandardDeck = StandardDeck()
-
-Hand1 = Hand()
-Hand1.add_new_card(StandardDeck.cards[22]) # problem when I put :
-Hand1.add_new_card(StandardDeck.cards[31]) # problem when I put :
-
-
-
-
-
-
-
-# Example for a straight card list
-List1 = [StandardDeck.cards[0],StandardDeck.cards[4],StandardDeck.cards[8],StandardDeck.cards[12],StandardDeck.cards[16]]
-cl = [NumberedCard(Suit.Diamonds,10), NumberedCard(Suit.Diamonds,9),Jackcard(Suit.Spades),
-          NumberedCard(Suit.Clubs,8), NumberedCard(Suit.Spades,6)]
-Pokerhand1 = PokerHand(cl)
-
-
-
-
-
-#xxx = [Pokerhand1,Pokerhand2]
-"""

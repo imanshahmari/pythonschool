@@ -7,10 +7,13 @@ from cardlib import *
 def test_cards():
     h5 = NumberedCard(Suit.Hearts,4)
     assert isinstance(h5.suit, IntEnum)
-
     sk = KingCard(Suit.Spades)
     assert sk.get_value() == 13
 
+    ph = AceCard(Suit.Spades)
+
+    assert ph.get_value() == 14
+    assert ph > sk
     assert h5 < sk
     assert h5 == h5
 
@@ -25,6 +28,12 @@ def test_StandardDeck():
     d2 = StandardDeck()
     d2.shuffle()
     assert not d == d2
+
+    d3 = StandardDeck()
+    a = d3.cards.copy()
+    d3.shuffle()
+    b = d3.cards
+    assert not a == b
 
 
 # This test builds on the assumptions above and assumes you store the cards in the hand in the list "cards",
@@ -53,6 +62,14 @@ def test_hand():
 
 
 def test_pokerhands():
+    "Test PokerHand types"
+    pokerhand_1 = PokerHand([NumberedCard(Suit.Spades,8),NumberedCard(Suit.Spades,7),AceCard(Suit.Clubs)
+                    ,NumberedCard(Suit.Spades,6),NumberedCard(Suit.Spades,8),])
+    pokerhand_2 = PokerHand([NumberedCard(Suit.Spades,8),NumberedCard(Suit.Hearts,8),AceCard(Suit.Clubs)
+                    ,NumberedCard(Suit.Clubs,8),NumberedCard(Suit.Diamonds,8),])
+    assert pokerhand_1 < pokerhand_2
+
+    "Test highcard"
     h1 = Hand()
     h1.add_new_card(QueenCard(Suit.Diamonds))
     h1.add_new_card(KingCard(Suit.Hearts))
@@ -73,6 +90,7 @@ def test_pokerhands():
 
     assert ph1 < ph2
 
+    "Test one pair"
     cl.pop(0)
     cl.append(QueenCard(Suit.Spades))
     ph3 = h1.best_poker_hand(cl)
@@ -80,10 +98,26 @@ def test_pokerhands():
     assert ph3 < ph4
     assert ph1 < ph2
 
-    # assert ph3 == PokerHand( <insert your handtype class and data here> )
-    # assert ph4 == PokerHand( <insert your handtype class and data here> )
+    "Test two pairs"
+    pokerhand_3 = PokerHand([NumberedCard(Suit.Spades,8),NumberedCard(Suit.Spades,9),AceCard(Suit.Clubs)
+                    ,NumberedCard(Suit.Hearts,8),NumberedCard(Suit.Hearts,9),])
+    pokerhand_4 = PokerHand([NumberedCard(Suit.Diamonds,8),NumberedCard(Suit.Diamonds,9),AceCard(Suit.Spades)
+                    ,NumberedCard(Suit.Clubs,8),NumberedCard(Suit.Clubs,9)])
+    assert pokerhand_3 == pokerhand_4
 
-    cl = [QueenCard(Suit.Clubs), QueenCard(Suit.Spades), KingCard(Suit.Clubs), KingCard(Suit.Spades)]
-    ph5 = h1.best_poker_hand(cl)
-    # assert ph5 == PokerHand( <insert your handtype for a Full House and data here> )
+    "Test three of a kind"
+    pokerhand_5 = PokerHand([NumberedCard(Suit.Spades,8),NumberedCard(Suit.Spades,9),AceCard(Suit.Clubs)
+                    ,NumberedCard(Suit.Hearts,8),NumberedCard(Suit.Hearts,8),])
+    pokerhand_6 = PokerHand([NumberedCard(Suit.Spades,7),NumberedCard(Suit.Spades,9),AceCard(Suit.Clubs)
+                    ,NumberedCard(Suit.Hearts,7),NumberedCard(Suit.Hearts,7),])
+    assert pokerhand_5 > pokerhand_6
+
+    "Test straight"
+    pokerhand_7 = PokerHand([NumberedCard(Suit.Spades,2),NumberedCard(Suit.Spades,3),AceCard(Suit.Clubs)
+                    ,NumberedCard(Suit.Hearts,4),NumberedCard(Suit.Hearts,5)])
+    pokerhand_8 = PokerHand([KingCard(Suit.Spades),AceCard(Suit.Clubs),Jackcard(Suit.Hearts)
+                    ,QueenCard(Suit.Clubs),NumberedCard(Suit.Hearts,10)])
+    assert pokerhand_8 > pokerhand_7
+
+
 
