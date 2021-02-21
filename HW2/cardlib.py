@@ -141,9 +141,9 @@ class PokerHand:
 
     def __lt__(self, other):
         if self.type == other.type:
-            if self.highest_value == list:
-                return tuple(self.highest_value.sort(reverse=True)) < tuple(other.highest_value.sort(reverse=True))
-            elif self.highest_value == int:
+            if isinstance(self.highest_value,list):
+                return tuple(self.highest_value) < tuple(other.highest_value)
+            elif isinstance(self.highest_value,int):
                 return self.highest_value < other.highest_value
         else:
             return self.type < other.type
@@ -347,12 +347,17 @@ class PokerHand:
             for zero in reversed(zeros):
                 if zero != two:
                     self.type = Handtype.one_pair
+                    other_values = [c.get_value() for c in self.cards_combined]
                     self.highest_value = [two]
+                    other_values.remove(two)
+                    self.highest_value = self.highest_value + other_values
 
     def high_card(self):
-        self.cards_combined.sort()
+        all_values = [c.get_value() for c in self.cards_combined]
+        all_values.sort(reverse=True)
         self.type = Handtype.high_card
-        self.highest_value = self.cards_combined[5].get_value()
+        self.highest_value = all_values
+
 
 
 
