@@ -1,5 +1,5 @@
 """ Playing card library for texas poker game
-Author: Iman Shahmari """
+Authors: Iman Shahmari Khalid Barkhad"""
 
 version = "1.0"  # Module global variable
 from enum import IntEnum
@@ -7,21 +7,39 @@ from enum import IntEnum
 #Creating super class PlayingCard
 
 class PlayingCard:
+    """
+    Base class for creating playing cards
+    """
+
     def __init__(self, suit):
         self.suit = suit
 
     def __lt__(self, other):
+        """
+                overload < operator between self value and other value
+                :param other:
+                :return: True or False
+                """
         if self.get_value() == other.get_value():
             return self.suit < other.suit
         else:
             return self.get_value() < other.get_value()
 
     def __eq__(self, other):
+        """
+        Return True if two cards are equal
+        :param other: other cards
+        :return: True
+        """
 
         return self.get_value() == other.get_value() and self.suit == other.suit
 
 
     def __str__(self):
+        """
+        stringify card attributes
+        :return: string of cards attributes
+        """
         return "(" + str(self.__class__) + ',' + str(self.suit) + ',' + str(self.get_value()) + ")"
 
     def get_value(self):
@@ -32,6 +50,9 @@ class PlayingCard:
 
 #sub class numbered cards
 class NumberedCard(PlayingCard):
+    """
+        Class for numbered playing cards, inherits from parent abstract class PlayingCard
+        """
     def __init__(self, suit, value):
         super().__init__(suit)
         self.value = value
@@ -62,6 +83,10 @@ class AceCard(PlayingCard):
 
 #Creating class for suits
 class Suit(IntEnum):
+    """
+        class that defines suits,
+        enumerated for later purposes although the values are random and not important
+        """
     Clubs = 0
     Diamonds = 1
     Hearts = 2
@@ -69,7 +94,13 @@ class Suit(IntEnum):
 
 
 class StandardDeck:
+    """
+        create deck class
+        """
     def __init__(self):
+        """
+                for loops that construct the deck
+                """
         cards = []
         for i in range(2, 11):
             for suit in Suit:
@@ -82,30 +113,62 @@ class StandardDeck:
             cards_pic.append(AceCard(suit))
         self.cards = cards + cards_pic
     def shuffle(self):
+        """
+                method that shuffles the deck randomly
+                :return: shuffled deck
+                """
         import random
         random.shuffle(self.cards)
 
     def take_card(self):
+        """
+                method that takes the top card and removes it from deck
+                :return: the top card
+                """
         mycard = self.cards[0]
         del self.cards[0]
         return mycard
 
 
 class Hand:
+    """
+        class Hand that defines the cards on the table
+        """
     def __init__(self):
         self.cards = []
 
     def add_new_card(self,newcard):
-        return self.cards.append(newcard)
+        """
+        add new card to Hand
+
+        :param newcard: card to be added
+        :return: append card list in hand
+                """
+        self.cards.append(newcard)
 
     def drop_cards(self,indexes):
+        """
+                drop cards from hand based on input index
+                
+                :param indexes: int
+                :return:
+                """
         for index in sorted(indexes, reverse = True):
             del self.cards[index]
-        return
+
     def sort_cards(self):
-        return self.cards.sort()
+        """
+                method that sorts cards in hand
+                :return: sorted card list
+                """
+        self.cards.sort()
 
     def best_poker_hand(self,Deck_cards):
+        """
+                method that computes best poker hand based on cards in hand and cards in input argument
+                :param Deck_cards: card object
+                :return: PokerHand object
+                """
         all_cards = self.cards + Deck_cards
         best_combo = PokerHand(all_cards)
         return best_combo
@@ -113,6 +176,9 @@ class Hand:
 
 
 class Handtype(IntEnum):
+    """
+        class that ranks the different hand types based on relative strength
+        """
     high_card = 0
     one_pair = 1
     two_pair = 2
@@ -126,6 +192,9 @@ class Handtype(IntEnum):
 
 
 class PokerHand:
+    """
+        class PokerHand that creates PokerHand objects based on cards in input argument
+        """
     def __init__(self,cards_combined):
         self.cards_combined = cards_combined
         self.type = []
@@ -140,6 +209,11 @@ class PokerHand:
         self.check_straight_flush()
 
     def __lt__(self, other):
+        """
+        overload < operator to compare PokerHand objects
+        :param other:
+        :return: True or False
+                """
         if self.type == other.type:
             if isinstance(self.highest_value,list):
                 return tuple(self.highest_value) < tuple(other.highest_value)
@@ -147,19 +221,26 @@ class PokerHand:
                 return self.highest_value < other.highest_value
         else:
             return self.type < other.type
-    def __eq__(self,other):
+
+    def __eq__(self, other):
+
         if self.type == other.type:
-           if self.highest_value == other.highest_value:
-               return True
+            if self.highest_value == other.highest_value:
+                return True
         else:
             return False
+
     def __str__(self):
         return "(" + str(self.type) + ',' + str(self.highest_value) + ")"
 
 
 
-
     def straight(self):
+        """
+                def straight HandType
+                check for straight
+                :return: highest value
+                """
         # Get rid of repeated values by turning them into sets
         values_cards_combined = [item.get_value() for item in self.cards_combined]
         uniqe_values = list(set(values_cards_combined))
@@ -184,11 +265,14 @@ class PokerHand:
                    else:
                        if not list_7[i][j] + 1 == list_7[i][j + 1]: found_straight_7[i] = False
                self.type = Handtype.straight
-
                if found_straight_7[i]:
                    self.type = Handtype.straight
-                   self.highest_value = list_7[i][4]
-                   return
+                   if list_7[i][4] == 14 and list_7[i][0] == 2:
+                       self.highest_value = list_7[i][0]
+                   else:
+                       self.highest_value = list_7[i][4]
+
+
 
 
 
@@ -198,14 +282,15 @@ class PokerHand:
             found_straight_6_1 = True
             for j in range(0,4):
                 if list_6_1[4] == 14 and list_6_1[0] == 2:
-                    if not list_6_1[j] == j+2: found_straight_6_1 = False
+                    if not list_6_1[j] == j+2 : found_straight_6_1 = False
                 else:
                     if not list_6_1[j] + 1 == list_6_1[j+1]: found_straight_6_1 = False
             if found_straight_6_1:
                 self.type = Handtype.straight
-                self.highest_value = list_6_1[4]
-                return
-
+                if list_6_1[4] == 14 and list_6_1[0] == 2:
+                    self.highest_value = list_6_1[0]
+                else:
+                    self.highest_value = list_6_1[4]
 
             list_6_2 = [item.get_value() for item in self.cards_combined[1:6]]
             list_6_2.sort()
@@ -215,10 +300,13 @@ class PokerHand:
                     if not list_6_2[j] == j + 2: found_straight_6_2 = False
                 else:
                     if not list_6_2[j] + 1 == list_6_2[j + 1]: found_straight_6_2 = False
+
             if found_straight_6_2:
                 self.type = Handtype.straight
-                self.highest_value = list_6_1[4]
-                return
+                if list_6_2[4] ==14 and list_6_2[0]==2:
+                    self.highest_value = list_6_2[0]
+                else:
+                    self.highest_value =list_6_2[4]
 
 
 
@@ -233,12 +321,20 @@ class PokerHand:
                     if not list_5[j] + 1 == list_5[j+1]: found_straight_5 = False
             if found_straight_5:
                 self.type = Handtype.straight
-                self.highest_value =list_5[4]
-                return
+                if list_5[4] ==14 and list_5[0]==2:
+                    self.highest_value = list_5[0]
+                else:
+                    self.highest_value =list_5[4]
 
 
 
     def check_straight_flush(self):
+        """
+        Checks for the best straight flush in a list of cards (may be more than just 5)
+
+        :param cards: A list of playing cards.
+        :return: None if no straight flush is found, else the value of the top card.
+                    """
         vals = [(c.get_value(), c.suit) for c in self.cards_combined] \
                + [(1, c.suit) for c in self.cards_combined if c.get_value() == 14]  # Add the aces!
         for c in reversed(self.cards_combined):  # Starting point (high card)
@@ -251,7 +347,7 @@ class PokerHand:
             if found_straight:
                 self.highest_value = c.get_value()
                 self.type = Handtype.straight_flush
-                return
+
 
 
 
@@ -282,11 +378,15 @@ class PokerHand:
 
 
     def check_flush(self):
+        """
+                check for flush HandType
+                :return: values in flush
+                """
         vals2_suit = [c.suit for c in self.cards_combined]
         vals2_values =[item.get_value() for item in self.cards_combined]
         found_flush = True
         for i in vals2_suit:
-            if vals2_suit[0] == vals2_suit[i]:
+            if not vals2_suit[0] == vals2_suit[i]:
                 found_flush = False
         if found_flush == True:
             self.type = Handtype.flush
@@ -296,6 +396,11 @@ class PokerHand:
 
 
     def four_of_a_kind(self):
+        """
+            check for four of a kind HandType
+
+            :return: values in four of a kind
+                        """
         from collections import Counter
         value_count = Counter()
         for c in self.cards_combined:
@@ -311,6 +416,11 @@ class PokerHand:
                     self.highest_value = [four]
 
     def three_of_a_kind(self):
+        """
+            check for three of a kind HandType
+
+            :return: values in three of a kind
+                            """
         from collections import Counter
         value_count = Counter()
         for c in self.cards_combined:
@@ -326,6 +436,11 @@ class PokerHand:
                     self.highest_value = [three]
 
     def two_pair(self):
+        """
+            check for two pair HandType
+
+            :return: high values in two pairs
+                            """
         from collections import Counter
         value_count = Counter()
         for c in self.cards_combined:
@@ -341,6 +456,11 @@ class PokerHand:
                     self.highest_value = [two_1,two_2]
 
     def one_pair(self):
+        """
+            check for one pair HandType
+
+            :return: high value in one pair
+                                    """
         from collections import Counter
         value_count = Counter()
         for c in self.cards_combined:
@@ -359,7 +479,13 @@ class PokerHand:
                     self.highest_value = self.highest_value + other_values
 
     def high_card(self):
+        """
+            check for high card HandType
+
+            :return: high card as well as the cards coming after
+                                    """
         all_values = [c.get_value() for c in self.cards_combined]
         all_values.sort(reverse=True)
         self.type = Handtype.high_card
         self.highest_value = all_values
+

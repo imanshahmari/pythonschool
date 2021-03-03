@@ -2,7 +2,7 @@ from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 import sys
-
+import modelkristofer
 
 qt_app = QApplication(sys.argv)
 
@@ -34,14 +34,6 @@ class Buttons(QWidget):
             button = QPushButton(label)
             hbox.addWidget(button)
 
-        """callButton = QPushButton("Call")
-        betButton = QPushButton("Bet")
-        foldButton = QPushButton("Fold")
-        hbox = QHBoxLayout()
-        hbox.addWidget(callButton)
-        hbox.addWidget(betButton)
-        hbox.addWidget(foldButton)"""
-
         self.setLayout(hbox)
 
 
@@ -62,13 +54,16 @@ class CardDisplay(QWidget):
 
 
 class WholeWindow(QGroupBox):
-    def __init__(self):
+    def __init__(self,model):  #skicka in model
+
         super().__init__()
         hbox = QHBoxLayout()
+
 
         hbox.addWidget(PlayerWidget('Player 1'))
         hbox.addWidget(PlayerWidget('Player 2'))
         hbox.addWidget(Buttons(['Call', 'Bet', 'Fold']))
+        hbox.addWidget(QLabel(model.deck))
 
         vbox = QVBoxLayout()
         vbox.addWidget(CardDisplay('CARDS PLACEHOLDER'))
@@ -85,7 +80,7 @@ class WholeWindow(QGroupBox):
 
 stylesheet = """
     WholeWindow {
-        background-image: url("greenback.jpg"); 
+        background-image: url("gree.jpg"); 
         background-repeat: no-repeat; 
         background-position: center;
     } """
@@ -93,7 +88,7 @@ stylesheet = """
 
 qt_app.setStyleSheet(stylesheet)
 
-
-win = WholeWindow()
+model1 = modelkristofer.Model()
+win = WholeWindow(model1) #modelen
 win.show()
 qt_app.exec_()
