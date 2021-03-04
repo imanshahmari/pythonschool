@@ -16,10 +16,15 @@ class PlayerWidget(QWidget):
         self.money = money
         hbox = QHBoxLayout()
 
-        playerButton = QPushButton(label)
+        player_label = QLabel(label)
+        player_money = QLabel(money)
 
-        hbox.addWidget(playerButton)
-        self.setLayout(hbox)
+        hbox.addWidget(player_label)
+
+        vbox = QVBoxLayout()
+        vbox.addWidget(player_money)
+        vbox.addLayout(hbox)
+        self.setLayout(vbox)
 
 
 class Buttons(QWidget):
@@ -45,7 +50,7 @@ class CardDisplay(QWidget):
         self.label = label
         str_cards = [c.__str__() for c in Table.hand.cards]
         vbox = QVBoxLayout()
-        CARDS = QPushButton(label)
+        CARDS = QLabel(str(str_cards))
         vbox.addWidget(CARDS)
 
         self.setLayout(vbox)
