@@ -2,24 +2,24 @@ from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 import sys
-import modelkristofer
+from modelkristofer import *
 
 qt_app = QApplication(sys.argv)
 
 
 
 class PlayerWidget(QWidget):
-    def __init__(self,label):
+    def __init__(self,label,money ):
         super().__init__()
 
         self.label = label
+        self.money = money
         hbox = QHBoxLayout()
 
         playerButton = QPushButton(label)
 
         hbox.addWidget(playerButton)
         self.setLayout(hbox)
-
 
 
 class Buttons(QWidget):
@@ -43,7 +43,7 @@ class CardDisplay(QWidget):
     def __init__(self,label):
         super().__init__()
         self.label = label
-
+        str_cards = [c.__str__() for c in Table.hand.cards]
         vbox = QVBoxLayout()
         CARDS = QPushButton(label)
         vbox.addWidget(CARDS)
@@ -60,13 +60,14 @@ class WholeWindow(QGroupBox):
         hbox = QHBoxLayout()
 
 
-        hbox.addWidget(PlayerWidget('Player 1'))
-        hbox.addWidget(PlayerWidget('Player 2'))
+        hbox.addWidget(PlayerWidget("Player stash: " + str(player1.money),"Player name : " + player1.player_name))
+        hbox.addWidget(PlayerWidget("Player stash: " + str(player2.money),"Player name : " + player2.player_name))
         hbox.addWidget(Buttons(['Call', 'Bet', 'Fold']))
-        hbox.addWidget(QLabel(model.deck))
+        hbox.addWidget(QLabel("Pot: " + str(model.pot)))
 
         vbox = QVBoxLayout()
         vbox.addWidget(CardDisplay('CARDS PLACEHOLDER'))
+
         vbox.addLayout(hbox)
 
 
@@ -88,7 +89,6 @@ stylesheet = """
 
 qt_app.setStyleSheet(stylesheet)
 
-model1 = modelkristofer.Model()
-win = WholeWindow(model1) #modelen
+win = WholeWindow(Game)
 win.show()
 qt_app.exec_()
