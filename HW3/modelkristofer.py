@@ -3,19 +3,48 @@ deck = StandardDeck()
 deck.shuffle()
 
 
+
+
 class Model():
-    def __init__(self):
+    def __init__(self,players,table):
         self.deck = deck
         self.pot = 0
         self.pot_before = 0
         self.pot_after = 0
-        self.strange = "sadasdasdas"
-       #self.active_player = active_player
+        self.players = players
+        self.active_player = 0
+        self.table = table
+        self.bet_sum = 0
+
+    def call(self):
+        call_sum = self.pot_after - self.pot_before
+        print(call_sum)
+        self.pot = self.pot + call_sum
+        self.players[self.active_player].call(call_sum)
+        self.active_player = (self.active_player + 1) % 2
+
+
+    def bet(self): #,bet_sum som input från gui
+        bet_sum = int(input("Enter bet sum:"))
+
+        self.bet_sum = self.bet_sum + bet_sum
+        self.pot_before = self.pot
+        self.pot = self.pot + bet_sum
+        self.pot_after=self.pot
+        self.players[self.active_player].bet(bet_sum)
+        self.active_player = (self.active_player + 1) % 2
+
+        """
+            def fold(self,player):
+                model.victory = "Spelaren som inte foldade vann"
+                player.money = player.money + model.pot
+                """
+
 
 
     # string with name of players
 class Player():
-    def __init__(self, model,player_name):
+    def __init__(self,player_name):
         super().__init__()
         self.player_name = player_name
         self.cards = [deck.take_card(),deck.take_card()]
@@ -29,15 +58,16 @@ class Player():
         model.pot_after=model.pot
         self.money = self.money - bet_sum
 
-
-    def call(self,model):
-        call_sum = model.pot_after - model.pot_before
+    def call(self,call_sum):
         self.money = self.money - call_sum
-        model.pot = model.pot + call_sum
 
-    def fold(self,model,player):
+
+
+    """
+    def fold(self,player):
         model.victory = "Spelaren som inte foldade vann"
         player.money = player.money + model.pot
+        """
 
 
 class Table():
@@ -47,12 +77,13 @@ class Table():
     hand.add_new_card(deck.take_card())
 
 
-Game = Model()
-player1 = Player(Game,"K90")
-player2 = Player(Game,"Han")
-player1.bet(Game,100)
-player2.call(Game)
-player2.fold(Game, player1)
-Table = Table()
+
+player1 = Player("K90")
+player2 = Player("Han")
+table = Table()
+Game = Model([player1, player2],table)
+Game.bet()
+Game.call()
+
 
 

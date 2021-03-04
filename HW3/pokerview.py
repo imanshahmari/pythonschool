@@ -29,15 +29,26 @@ class PlayerWidget(QWidget):
 
 class Buttons(QWidget):
 
-    def __init__(self,labels):
+    def __init__(self,model):
         super().__init__()  # Call the QWidget initialization as well!
 
-        self.labels = labels
+        call = QPushButton("call")
+        bet = QPushButton("Bet")
+        fold = QPushButton("Fold")
+
+        call.clicked.connect(model.call)
+        bet.clicked.connect(model.bet)
+        #fold.clicked.connect(model.fold)
+
         hbox = QHBoxLayout()
 
-        for label in labels:
-            button = QPushButton(label)
-            hbox.addWidget(button)
+        hbox.addWidget(call)
+        hbox.addWidget(bet)
+        hbox.addWidget(fold)
+
+
+
+
 
         self.setLayout(hbox)
 
@@ -67,7 +78,7 @@ class WholeWindow(QGroupBox):
 
         hbox.addWidget(PlayerWidget("Player stash: " + str(player1.money),"Player name : " + player1.player_name))
         hbox.addWidget(PlayerWidget("Player stash: " + str(player2.money),"Player name : " + player2.player_name))
-        hbox.addWidget(Buttons(['Call', 'Bet', 'Fold']))
+        hbox.addWidget(Buttons(model))
         hbox.addWidget(QLabel("Pot: " + str(model.pot)))
 
         vbox = QVBoxLayout()
