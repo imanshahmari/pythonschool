@@ -34,11 +34,11 @@ class Model():
         self.players[self.active_player].bet(bet_sum)
         self.active_player = (self.active_player + 1) % 2
 
-        """
-            def fold(self,player):
-                model.victory = "Spelaren som inte foldade vann"
-                player.money = player.money + model.pot
-                """
+
+    def fold(self):
+        #model.victory = "Spelaren som inte foldade vann"
+        self.active_player = (self.active_player + 1) % 2
+
 
 
 
@@ -63,11 +63,9 @@ class Player():
 
 
 
-    """
     def fold(self,player):
-        model.victory = "Spelaren som inte foldade vann"
-        player.money = player.money + model.pot
-        """
+        #model.victory = "Spelaren som inte foldade vann"
+        self.money = player.money + self.pot
 
 
 class Table():
@@ -82,8 +80,6 @@ player1 = Player("K90")
 player2 = Player("Han")
 table = Table()
 Game = Model([player1, player2],table)
-Game.bet()
-Game.call()
 
 
 
